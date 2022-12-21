@@ -1,0 +1,25 @@
+caption {
+    text-align: center;
+    font-weight: bold;
+    font-size: xx-large;
+}
+
+table {
+    margin: 0 auto;
+}
+
+td {
+    border: 3px solid black;
+    text-align: center;
+    --cell-size: 8vmin;
+    width: clamp(30px, var(--cell-size), 50px);
+    height: clamp(30px, var(--cell-size), 50px);
+}
+
+p {
+    text-align: center;
+}
+
+input {
+    width: 50px;
+}
