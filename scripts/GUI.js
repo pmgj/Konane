@@ -87,7 +87,7 @@ class GUI {
                 }
             }
         } else {
-            if(dr > or) {
+            if (dr > or) {
                 for (let i = or; i <= dr; i += 2) {
                     path.push(new Cell(i, oc));
                 }
@@ -108,32 +108,23 @@ class GUI {
             const time = 1000;
             for (let i = 1; i < positions.length; i++) {
                 let { x: or, y: oc } = positions[i - 1];
-                let endTD = this.getTableData(positions[i]);
+                let { x: dr, y: dc } = positions[i];
                 await new Promise(resolve => {
+                    let middleImage = document.querySelector(`tr:nth-child(${(or + dr) / 2 + 1}) td:nth-child(${(oc + dc) / 2 + 1}) img`);
+                    let anim = middleImage.animate([{ opacity: 1 }, { opacity: 0 }], time);
+                    anim.onfinish = () => middleImage.parentNode.removeChild(middleImage);
                     let image = document.querySelector(`tr:nth-child(${or + 1}) td:nth-child(${oc + 1}) img`);
-                    let removePiece = ({ x: or, y: oc }, { x: dr, y: dc }) => {
-                        let img = document.querySelector(`tr:nth-child(${(or + dr) / 2 + 1}) td:nth-child(${(oc + dc) / 2 + 1}) img`);
-                        let anim = img.animate([{ opacity: 1 }, { opacity: 0 }], time);
-                        anim.onfinish = () => {
-                            img.parentNode.innerHTML = "";
-                            resolve(true);
-                        };
-                    }
-                    let animatePiece = (startPosition, endPosition) => {
-                        let piece = this.getTableData(startPosition).firstChild;
-                        let { x: a, y: b } = startPosition;
-                        let { x: c, y: d } = endPosition;
-                        let td = document.querySelector("td");
-                        let size = td.offsetWidth;
-                        let anim = piece.animate([{ top: 0, left: 0 }, { top: `${(c - a) * size}px`, left: `${(d - b) * size}px` }], time);
-                        removePiece(startPosition, endPosition);
-                        anim.onfinish = () => endTD.appendChild(piece);
+                    let moveImage = () => {
+                        this.getTableData(positions[i]).appendChild(image);
+                        resolve(true);
                     };
                     if (animation) {
-                        animatePiece(positions[i - 1], positions[i]);
+                        let td = document.querySelector("td");
+                        let size = td.offsetWidth;
+                        let anim = image.animate([{ top: 0, left: 0 }, { top: `${(dr - or) * size}px`, left: `${(dc - oc) * size}px` }], time);
+                        anim.onfinish = moveImage;
                     } else {
-                        removePiece(positions[i - 1], positions[i]);
-                        endTD.appendChild(image);
+                        moveImage();
                     }
                 });
             }

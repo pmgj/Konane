@@ -13,14 +13,8 @@ export default class Konane {
     startBoard() {
         let matrix = Array(this.rows).fill().map(() => Array(this.cols).fill(CellState.EMPTY));
         for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.cols; j += 2) {
-                if (i % 2 === 0) {
-                    matrix[i][j] = CellState.PLAYER1;
-                    matrix[i][j + 1] = CellState.PLAYER2;
-                } else {
-                    matrix[i][j] = CellState.PLAYER2;
-                    matrix[i][j + 1] = CellState.PLAYER1;
-                }
+            for (let j = 0; j < this.cols; j++) {
+                matrix[i][j] = ((i % 2 !== 0 && j % 2 === 0) || (i % 2 === 0 && j % 2 !== 0)) ? CellState.PLAYER1 : CellState.PLAYER2;
             }
         }
         matrix[Math.floor(this.rows / 2)][Math.floor(this.rows / 2)] = CellState.EMPTY;
@@ -93,10 +87,10 @@ export default class Konane {
         return this.endOfGame();
     }
     endOfGame() {
-        if (!this.canPlay(CellState.PLAYER1)) {
+        if (this.turn === Player.PLAYER1 && !this.canPlay(CellState.PLAYER1)) {
             return Winner.PLAYER2;
         }
-        if (!this.canPlay(CellState.PLAYER2)) {
+        if (this.turn === Player.PLAYER2 && !this.canPlay(CellState.PLAYER2)) {
             return Winner.PLAYER1;
         }
         return Winner.NONE;
