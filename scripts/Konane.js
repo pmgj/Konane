@@ -1,6 +1,7 @@
 import CellState from "./CellState.js";
 import Player from "./Player.js";
 import Cell from "./Cell.js";
+import Winner from "./Winner.js";
 
 export default class Konane {
     constructor(rows, cols) {
@@ -89,6 +90,41 @@ export default class Konane {
         this.board[dr][dc] = this.board[or][oc];
         this.board[or][oc] = CellState.EMPTY;
         this.turn = this.turn === Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1;
+        return this.endOfGame();
+    }
+    endOfGame() {
+        if (!this.canPlay(CellState.PLAYER1)) {
+            return Winner.PLAYER2;
+        }
+        if (!this.canPlay(CellState.PLAYER2)) {
+            return Winner.PLAYER1;
+        }
+        return Winner.NONE;
+    }
+    canPlay(player) {
+        let opponent = player === CellState.PLAYER1 ? CellState.PLAYER2 : CellState.PLAYER1;
+        let condition = obj => {
+            let { op, empty } = obj;
+            let { x, y } = op;
+            let { x: a, y: b } = empty;
+            if (this.onBoard(op) && this.onBoard(empty) && this.board[x][y] === opponent && this.board[a][b] === CellState.EMPTY) {
+                return true;
+            }
+            return false;
+        };
+        for (let i = 0; i < this.board.length; i++) {
+            for (let j = 0; j < this.board[i].length; j++) {
+                let piece = this.board[i][j];
+                if (piece === player) {
+                    let cells = [{ op: new Cell(i - 1, j), empty: new Cell(i - 2, j) }, { op: new Cell(i, j - 1), empty: new Cell(i, j - 2) }, { op: new Cell(i, j + 1), empty: new Cell(i, j + 2) }, { op: new Cell(i + 1, j), empty: new Cell(i + 2, j) }];
+                    let qtt = cells.filter(condition).length;
+                    if (qtt > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     getBoard() {
         return this.board;

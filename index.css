@@ -11,6 +11,10 @@ table {
 td {
     border: 3px solid black;
     text-align: center;
+}
+
+td,
+img {
     --cell-size: 8vmin;
     width: clamp(30px, var(--cell-size), 50px);
     height: clamp(30px, var(--cell-size), 50px);
@@ -22,4 +26,10 @@ p {
 
 input {
     width: 50px;
+}
+
+img {
+    vertical-align: middle;
+    position: relative;
+    animation-fill-mode: backwards;
 }
